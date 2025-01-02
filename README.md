@@ -1,8 +1,4 @@
 # Amarr - aMule *arr Connector
-![Docker Image Version (latest semver)](https://img.shields.io/docker/v/vexdev/amarr)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/vexdev/amarr/release.yml)
-[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
-
 
 This connector allows using aMule as a download client for [Sonarr](https://sonarr.tv/)
 and [Radarr](https://radarr.video/).
@@ -24,8 +20,6 @@ Or again you could run aMule in a VM or in a physical machine.
 
 ## Installation
 
-Amarr runs as a docker container. You can find it in [Docker Hub](https://hub.docker.com/r/vexdev/amarr).
-
 It requires the following environment variables:
 
 ```
@@ -36,31 +30,6 @@ AMULE_PASSWORD: secret # The password to connect to aMule
 Optional parameters:
 AMULE_FINISHED_PATH: /finished # The directory where aMule will download the finished files
 AMARR_LOG_LEVEL: INFO # The log level of amarr, defaults to INFO
-```
-
-It also requires mounting the following volumes:
-
-```
-/config # The directory where amarr will store its configuration, must be persistent
-```
-
-The container exposes the port 8080, which is the port where amarr will expose the Torznab server for Sonarr/Radarr.
-
-### Example docker-compose.yml
-
-```yaml
-services:
-  amarr:
-    image: vexdev/amarr:latest
-    container_name: amarr
-    environment:
-      - AMULE_HOST=aMule
-      - AMULE_PORT=4712
-      - AMULE_PASSWORD=secret
-    volumes:
-      - /path/to/amarr/config:/config
-    ports:
-      - 8080:8080
 ```
 
 ## Radarr/Sonarr configuration (2 easy steps)
@@ -75,7 +44,7 @@ You can do that by adding a new download client of type **qBittorrent** with the
 ! Ensure you pressed the "Show advanced settings" button
 Name: Any name you want
 Host: amarr # The host where amarr is running, for docker containers it's usually the name of the container
-Port: 8080 # The port where amarr is listening
+Port: 4713 # The port where amarr is listening
 Priority: 50 # This is the lowest possible priority, so Sonarr/Radarr will prefer other download clients
 ```
 
@@ -89,7 +58,7 @@ Add a new **Torznab indexer** with the following settings:
 ```
 ! Ensure you pressed the "Show advanced settings" button
 Name: Any name you want
-Url: http://amarr:8080/indexer/<indexer-type>
+Url: http://amarr:4713/indexer/<indexer>
 Download Client: The name you gave to amarr in the previous step
 ```
 
@@ -109,18 +78,3 @@ It is very slow and not very reliable. Additionally, files on the kad/eD2k netwo
 up downloading fake files.
 
 Does not require any additional configuration.
-
-### `ddunlimitednet` - BETA!!
-
-_⚠️⚠️⚠️ This indexer is still in beta. It may not work as expected. ⚠️⚠️⚠️_
-
-ddunlimited.net is very restrictive with the number of searches you can perform, so this indexer is subject to rate limits.
-
-This indexer will search for files in [ddunlimited.net](https://ddunlimited.net/).
-
-Requires the following environment variables to be set:
-
-```
-DDUNLIMITEDNET_USERNAME: username # The username to connect to ddunlimited.net
-DDUNLIMITEDNET_PASSWORD: password # The password to connect to ddunlimited.net
-```

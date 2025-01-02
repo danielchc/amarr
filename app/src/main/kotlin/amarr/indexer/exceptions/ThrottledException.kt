@@ -1,3 +1,3 @@
-package amarr.torznab.indexer
+package amarr.indexer.exceptions
 
 class ThrottledException : Exception()

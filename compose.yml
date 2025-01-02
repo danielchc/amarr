@@ -1,0 +1,15 @@
+services:
+  amarr:
+    build: .
+    container_name: amarr
+    environment:
+      - AMULE_HOST=aMule
+      - AMULE_PORT=4712
+      - AMULE_PASSWORD=secret
+    volumes:
+      - ammar-config:/config
+    ports:
+      - 4713:4713
+
+volumes:
+  ammar-config:

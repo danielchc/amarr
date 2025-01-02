@@ -3,11 +3,8 @@ package amarr
 import amarr.amule.debugApi
 import amarr.category.FileCategoryStore
 import amarr.torrent.torrentApi
-import amarr.torznab.indexer.AmuleIndexer
-import amarr.torznab.indexer.ddunlimitednet.DdunlimitednetClient
-import amarr.torznab.indexer.ddunlimitednet.DdunlimitednetIndexer
-import amarr.torznab.torznabApi
-import io.ktor.client.engine.cio.*
+import amarr.indexer.implementations.amule.AmuleIndexer
+import amarr.indexer.torznab.torznabApi
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -32,12 +29,11 @@ private val AMULE_PASSWORD = System.getenv("AMULE_PASSWORD").apply {
 private val AMULE_FINISHED_PATH = System.getenv("AMULE_FINISHED_PATH").let { it ?: "/finished" }
 private val AMARR_CONFIG_PATH = System.getenv("AMARR_CONFIG_PATH").let { it ?: "/config" }
 private val AMARR_LOG_LEVEL = System.getenv("AMARR_LOG_LEVEL").let { it ?: "INFO" }
-private val DDUNLIMITEDNET_USERNAME = System.getenv("DDUNLIMITEDNET_USERNAME")
-private val DDUNLIMITEDNET_PASSWORD = System.getenv("DDUNLIMITEDNET_PASSWORD")
+
 
 fun main() {
     embeddedServer(
-        Netty, port = 8080
+        Netty, port = 4713
     ) {
         app()
     }.start(wait = true)
@@ -48,8 +44,6 @@ internal fun Application.app() {
     setLogLevel(log)
     val amuleClient = buildClient(log)
     val amuleIndexer = AmuleIndexer(amuleClient, log)
-    val ddunlimitednetClient = DdunlimitednetClient(CIO.create(), DDUNLIMITEDNET_USERNAME, DDUNLIMITEDNET_PASSWORD, log)
-    val ddunlimitednetIndexer = DdunlimitednetIndexer(ddunlimitednetClient, log)
     val categoryStore = FileCategoryStore(AMARR_CONFIG_PATH)
 
     install(CallLogging) {
@@ -64,7 +58,7 @@ internal fun Application.app() {
         })
     }
     debugApi(amuleClient)
-    torznabApi(amuleIndexer, ddunlimitednetIndexer)
+    torznabApi(amuleIndexer)
     torrentApi(amuleClient, categoryStore, AMULE_FINISHED_PATH)
 }
 
