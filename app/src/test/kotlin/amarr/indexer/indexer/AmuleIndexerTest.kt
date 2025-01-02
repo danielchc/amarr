@@ -2,6 +2,8 @@ package amarr.indexer.indexer
 
 import amarr.MagnetLink
 import amarr.indexer.implementations.amule.AmuleIndexer
+import amarr.indexer.search.SearchQuery
+import amarr.indexer.search.SearchType
 import amarr.indexer.torznab.TorznabFeed.Channel.Item.TorznabAttribute
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContain
@@ -29,7 +31,8 @@ class AmuleIndexerTest : StringSpec({
 
     "when empty queried should return only one result within that category" {
         val indexer = AmuleIndexer(mockClient, logger)
-        val results = indexer.search("", 0, 1000, listOf())
+        val searchQuery= SearchQuery("", SearchType.Search)
+        val results = indexer.search(searchQuery, 0, 1000, listOf())
         results.channel.response.total shouldBe 1
         results.channel.response.offset shouldBe 0
         results.channel.item.size shouldBe 1
@@ -56,7 +59,8 @@ class AmuleIndexerTest : StringSpec({
         )
         every { mockClient.searchSync(any()) } returns Result.success(SearchResultsResponse(listOf(searchFile)))
         val indexer = AmuleIndexer(mockClient, logger)
-        val result = indexer.search("test", 0, 1000, listOf())
+        val searchQuery= SearchQuery("test", SearchType.Search)
+        val result = indexer.search(searchQuery, 0, 1000, listOf())
         verify { mockClient.searchSync("test") }
         result.channel.response.total shouldBe 1
         result.channel.response.offset shouldBe 0
