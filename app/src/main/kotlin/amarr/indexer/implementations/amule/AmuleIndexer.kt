@@ -25,15 +25,14 @@ class AmuleIndexer(private val amuleClient: AmuleClient, private val log: Logger
         }
 
         val queries: List<String> = when (query.searchType) {
-            SearchType.TV -> SearchFormat.tvSearchFormat.map { k -> k.format(query.q, query.season, query.episode) }
-            else -> listOf(query.q)
+            SearchType.TV -> SearchFormat.tvSearchFormat.map { k -> k.format(query.getCleanedQuery(), query.season, query.episode) }
+            else -> listOf(query.getCleanedQuery())
         }
 
 
         queries.forEach({
-            val fmtQuery = it.replace("[^a-zA-Z0-9\\s]".toRegex(), "")
-            log.debug("Starting search for query: {}, offset: {}, limit: {}", fmtQuery, offset, limit)
-            searchFiles.addAll(amuleClient.searchSync(fmtQuery).getOrThrow().files)
+            log.debug("Starting search for query: {}, offset: {}, limit: {}", it, offset, limit)
+            searchFiles.addAll(amuleClient.searchSync(it).getOrThrow().files)
         })
         return buildFeed(searchFiles, offset, limit)
     }

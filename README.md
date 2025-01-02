@@ -1,5 +1,7 @@
 # Amarr - aMule *arr Connector
 
+[Docker Hub Image](https://hub.docker.com/r/danielchc/amarr)
+
 This connector allows using aMule as a download client for [Sonarr](https://sonarr.tv/)
 and [Radarr](https://radarr.video/).
 It works by emulating a torrent client, so Sonarr and Radarr will manage your downloads as if they were torrents.
