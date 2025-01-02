@@ -1,6 +1,6 @@
 services:
   amarr:
-    build: .
+    image: danielchc/amarr
     container_name: amarr
     environment:
       - AMULE_HOST=aMule
@@ -10,6 +10,5 @@ services:
       - ammar-config:/config
     ports:
       - 4713:4713
-
 volumes:
   ammar-config:

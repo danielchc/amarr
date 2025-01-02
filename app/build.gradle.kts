@@ -56,7 +56,7 @@ jib {
         }
     }
     to {
-        image = "vexdev/amarr"
+        image = "danielchc/amarr"
         tags = setOf(version.toString())
         auth {
             username = System.getenv("DOCKER_USERNAME")
