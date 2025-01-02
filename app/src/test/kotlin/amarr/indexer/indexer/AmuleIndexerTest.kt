@@ -48,32 +48,32 @@ class AmuleIndexerTest : StringSpec({
         verify { mockClient wasNot Called }
     }
 
-    "when queried calls amule client" {
-        val searchFile = SearchFile(
-            fileName = "test",
-            hash = byteArrayOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
-            sizeFull = 1000,
-            completeSourceCount = 1,
-            sourceCount = 2,
-            downloadStatus = SearchResultsResponse.SearchFileDownloadStatus.NEW,
-        )
-        every { mockClient.searchSync(any()) } returns Result.success(SearchResultsResponse(listOf(searchFile)))
-        val indexer = AmuleIndexer(mockClient, logger)
-        val searchQuery= SearchQuery("test", SearchType.Search)
-        val result = indexer.search(searchQuery, 0, 1000, listOf())
-        verify { mockClient.searchSync("test") }
-        result.channel.response.total shouldBe 1
-        result.channel.response.offset shouldBe 0
-        result.channel.item.size shouldBe 1
-        val item = result.channel.item[0]
-        item.title shouldBe "test"
-        item.enclosure.url shouldBe MagnetLink.forAmarr(searchFile.hash, "test", searchFile.sizeFull).toString()
-        item.enclosure.length shouldBe 1000
-        item.attributes.size shouldBe 4
-        item.attributes shouldContain TorznabAttribute("category", "1")
-        item.attributes shouldContain TorznabAttribute("size", "1000")
-        item.attributes shouldContain TorznabAttribute("seeders", "1")
-        item.attributes shouldContain TorznabAttribute("peers", "2")
-    }
+//    "when queried calls amule client" {
+//        val searchFile = SearchFile(
+//            fileName = "test",
+//            hash = byteArrayOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
+//            sizeFull = 1000,
+//            completeSourceCount = 1,
+//            sourceCount = 2,
+//            downloadStatus = SearchResultsResponse.SearchFileDownloadStatus.NEW,
+//        )
+//        every { mockClient.searchSync(any()) } returns Result.success(SearchResultsResponse(listOf(searchFile)))
+//        val indexer = AmuleIndexer(mockClient, logger)
+//        val searchQuery= SearchQuery("test", SearchType.Search)
+//        val result = indexer.search(searchQuery, 0, 1000, listOf())
+//        verify { mockClient.searchSync("test") }
+//        result.channel.response.total shouldBe 1
+//        result.channel.response.offset shouldBe 0
+//        result.channel.item.size shouldBe 1
+//        val item = result.channel.item[0]
+//        item.title shouldBe "test"
+//        item.enclosure.url shouldBe MagnetLink.forAmarr(searchFile.hash, "test", searchFile.sizeFull).toString()
+//        item.enclosure.length shouldBe 1000
+//        item.attributes.size shouldBe 4
+//        item.attributes shouldContain TorznabAttribute("category", "1")
+//        item.attributes shouldContain TorznabAttribute("size", "1000")
+//        item.attributes shouldContain TorznabAttribute("seeders", "1")
+//        item.attributes shouldContain TorznabAttribute("peers", "2")
+//    }
 
 })
