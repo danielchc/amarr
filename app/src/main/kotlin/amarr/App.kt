@@ -33,7 +33,8 @@ private val AMARR_LOG_LEVEL = System.getenv("AMARR_LOG_LEVEL").let { it ?: "INFO
 
 fun main() {
     embeddedServer(
-        Netty, port = 4713
+        Netty,
+        port = 4713
     ) {
         app()
     }.start(wait = true)

@@ -16,25 +16,20 @@ import jamule.response.SearchResultsResponse.SearchFile
 class AmuleIndexer(private val amuleClient: AmuleClient, private val log: Logger) : Indexer {
 
     override suspend fun search(query: SearchQuery, offset: Int, limit: Int, cat: List<Int>): TorznabFeed {
-
-        val searchFiles: MutableList<SearchFile> = mutableListOf()
+        // https://wiki.amule.org/wiki/Search_regexp
 
         if (query.q.isBlank()) {
             log.debug("Empty query, returning empty response")
             return EMPTY_QUERY_RESPONSE
         }
 
-        val queries: List<String> = when (query.searchType) {
-            SearchType.TV -> SearchFormat.tvSearchFormat.map { k -> k.format(query.getCleanedQuery(), query.season, query.episode) }
-            else -> listOf(query.getCleanedQuery())
+        val regexpQuery: String = when (query.searchType) {
+            SearchType.TV -> "%s AND (%s)".format(query.getCleanedQuery(),
+                (SearchFormat.epSearchFormat.map { k -> k.format(query.season, query.episode) }).joinToString( " OR " ))
+            else -> query.getCleanedQuery()
         }
 
-
-        queries.forEach({
-            log.debug("Starting search for query: {}, offset: {}, limit: {}", it, offset, limit)
-            searchFiles.addAll(amuleClient.searchSync(it).getOrThrow().files)
-        })
-        return buildFeed(searchFiles, offset, limit)
+        return buildFeed(amuleClient.searchSync(regexpQuery).getOrThrow().files, offset, limit)
     }
 
     private fun buildFeed(items: List<SearchFile>, offset: Int, limit: Int) = TorznabFeed(
