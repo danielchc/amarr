@@ -29,6 +29,8 @@ class AmuleIndexer(private val amuleClient: AmuleClient, private val log: Logger
             else -> query.getCleanedQuery()
         }
 
+        log.debug("Starting search for query: {}, offset: {}, limit: {}", regexpQuery, offset, limit)
+        
         return buildFeed(amuleClient.searchSync(regexpQuery).getOrThrow().files, offset, limit)
     }
 
