@@ -90,7 +90,7 @@ internal fun Application.app() {
     debugApi(amuleClient)
     torznabApi(amuleIndexer, mediaFilter)
     torrentApi(amuleClient, categoryStore, AMULE_FINISHED_PATH)
-    startPeriodicJob(everyMillis = 60_000) {
+    startPeriodicJob(everyMillis = AMARR_CACHE_TTL_MS) {
         log.debug("Cleaning cached results...")
         cacheStore.cleanup()
     }
