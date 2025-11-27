@@ -40,7 +40,7 @@ private val AMULE_FINISHED_PATH = System.getenv("AMULE_FINISHED_PATH").let { it 
 private val AMARR_CONFIG_PATH = System.getenv("AMARR_CONFIG_PATH").let { it ?: "/config" }
 private val AMARR_LOG_LEVEL = System.getenv("AMARR_LOG_LEVEL").let { it ?: "WARN" }
 private val AMARR_CACHE_TTL_MS: Long = System.getenv("AMARR_CACHE_TTL_MS")?.toLongOrNull() ?: 1800_000
-private val AMARR_EXTENSION_FILTER: List<String> = (System.getenv("AMARR_CONFIG_PATH") ?: DEFAULT_AMARR_EXTENSIONS)
+private val AMARR_EXTENSION_FILTER: List<String> = (System.getenv("AMARR_EXTENSION_FILTER") ?: DEFAULT_AMARR_EXTENSIONS)
     .split(",")
     .map { it.trim() }
     .filter { it.isNotEmpty() }
