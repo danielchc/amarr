@@ -3,8 +3,6 @@ package amarr.indexer
 import amarr.indexer.implementations.amule.AmuleIndexer
 import amarr.indexer.caps.Caps
 import amarr.indexer.search.SearchQuery
-import amarr.indexer.search.SearchType
-import amarr.indexer.torznab.TorznabFeed
 import amarr.indexer.torznab.torznabApi
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec

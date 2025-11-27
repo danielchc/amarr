@@ -34,7 +34,7 @@ AMULE_FINISHED_PATH: /finished # The directory where aMule will download the fin
 AMARR_LOG_LEVEL: INFO # The log level of amarr, defaults to INFO
 ```
 
-## Radarr/Sonarr configuration (2 easy steps)
+## Radarr/Sonarr configuration
 
 ### 1. Configure amarr as a download client
 

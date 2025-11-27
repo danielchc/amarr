@@ -1,20 +1,14 @@
 package amarr.indexer.indexer
 
-import amarr.MagnetLink
 import amarr.indexer.implementations.amule.AmuleIndexer
 import amarr.indexer.search.SearchQuery
 import amarr.indexer.search.SearchType
-import amarr.indexer.torznab.TorznabFeed.Channel.Item.TorznabAttribute
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import io.mockk.Called
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import jamule.AmuleClient
-import jamule.response.SearchResultsResponse
-import jamule.response.SearchResultsResponse.SearchFile
 import org.slf4j.LoggerFactory
 
 class AmuleIndexerTest : StringSpec({

@@ -6,6 +6,7 @@ import amarr.indexer.implementations.amule.AmuleIndexer
 import amarr.indexer.Indexer
 import amarr.indexer.exceptions.ThrottledException
 import amarr.indexer.exceptions.UnauthorizedException
+import amarr.indexer.filters.MediaFilter
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -16,20 +17,15 @@ import nl.adaptivity.xmlutil.core.XmlVersion
 import nl.adaptivity.xmlutil.serialization.XML
 
 
-
-fun Application.torznabApi(amuleIndexer: AmuleIndexer) {
+fun Application.torznabApi(amuleIndexer: AmuleIndexer, mediaFilter: MediaFilter) {
     routing {
-        // Kept for legacy reasons
-        get("/api") {
-            call.handleRequests(amuleIndexer)
-        }
         get("/indexer/amule/api") {
-            call.handleRequests(amuleIndexer)
+            call.handleRequests(amuleIndexer, mediaFilter)
         }
     }
 }
 
-private suspend fun ApplicationCall.handleRequests(indexer: Indexer) {
+private suspend fun ApplicationCall.handleRequests(indexer: Indexer, mediaFilter: MediaFilter) {
     application.log.debug("Handling Torznab request")
     val xmlFormat = XML {
         xmlDeclMode = XmlDeclMode.Charset
@@ -41,30 +37,35 @@ private suspend fun ApplicationCall.handleRequests(indexer: Indexer) {
                 application.log.debug("Handling caps request")
                 respondText(xmlFormat.encodeToString(indexer.capabilities()), contentType = ContentType.Application.Xml)
             }
-            "tvsearch" -> performSearch(indexer, xmlFormat, SearchType.TV)
-            "movie" -> performSearch(indexer, xmlFormat, SearchType.Movie)
-            "search" -> performSearch(indexer, xmlFormat, SearchType.Search)
+            "tvsearch" -> performSearch(indexer, xmlFormat, mediaFilter, SearchType.TV)
+            "movie" -> performSearch(indexer, xmlFormat, mediaFilter, SearchType.Movie)
+            "search" -> performSearch(indexer, xmlFormat, mediaFilter, SearchType.Search)
 
             else -> throw IllegalArgumentException("Unknown action: $it")
         }
     } ?: throw IllegalArgumentException("Missing action")
 }
 
-private suspend fun ApplicationCall.performSearch(indexer: Indexer, xmlFormat: XML, searchType: SearchType) {
+private suspend fun ApplicationCall.performSearch(
+    indexer: Indexer,
+    xmlFormat: XML,
+    mediaFilter: MediaFilter,
+    searchType: SearchType
+) {
     val query = request.queryParameters["q"].orEmpty()
-    val ep = request.queryParameters["season"]?.toIntOrNull()?: 0
-    val season = request.queryParameters["ep"]?.toIntOrNull()?: 0
+    val ep = request.queryParameters["season"]?.toIntOrNull() ?: 0
+    val season = request.queryParameters["ep"]?.toIntOrNull() ?: 0
     val offset = request.queryParameters["offset"]?.toIntOrNull() ?: 0
     val limit = request.queryParameters["limit"]?.toIntOrNull() ?: 100
     val cat = request.queryParameters["cat"]?.split(",")?.map { cat -> cat.toInt() } ?: emptyList()
     application.log.debug("Handling search request: {}, {}, {}, {}", query, offset, limit, cat)
     try {
-        val searchQuery: SearchQuery = when (searchType){
-            SearchType.TV ->  SearchQuery(query,searchType,ep,season)
-            else -> SearchQuery(query,searchType)
+        val searchQuery: SearchQuery = when (searchType) {
+            SearchType.TV -> SearchQuery(query, searchType, ep, season)
+            else -> SearchQuery(query, searchType)
         }
         respondText(
-            xmlFormat.encodeToString(indexer.search(searchQuery, offset, limit, cat)),
+            xmlFormat.encodeToString(indexer.search(searchQuery, mediaFilter, offset, limit, cat)),
             contentType = ContentType.Application.Xml
         )
     } catch (e: ThrottledException) {
