@@ -8,8 +8,6 @@ It works by emulating a torrent client, so Sonarr and Radarr will manage your do
 
 Makes use of [jaMule](https://github.com/vexdev/jaMule) to connect to aMule, which only supports aMule versions **2.3.1** to **2.3.3**.
 
-Amarr has been especially tested with the latest released version of [Adunanza](https://www.adunanza.net/).
-
 ## Pre-requisites
 
 - [aMule](https://www.amule.org/) version **2.3.1** to **2.3.3** running and configured
@@ -17,7 +15,6 @@ Amarr has been especially tested with the latest released version of [Adunanza](
 
 **Amarr does not come with its own amule installation**, you need to have it running and configured.
 One way to do this is by using the [Amule Docker image from ngosang](https://github.com/ngosang/docker-amule).
-Or the [Adunanza Docker image from m4dfry](https://github.com/m4dfry/amule-adunanza-docker).
 Or again you could run aMule in a VM or in a physical machine.
 
 ## Installation
@@ -78,5 +75,6 @@ This indexer will search for files in aMule through the kad/eD2k network.
 
 It is very slow and not very reliable. Additionally, files on the kad/eD2k network are not well reviewed, so you may end
 up downloading fake files.
+
 
 Does not require any additional configuration.
